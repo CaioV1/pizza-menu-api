@@ -1,6 +1,10 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
@@ -19,9 +23,7 @@ export class UserService {
     });
 
     if (userAlreadyInserted) {
-      throw new ConflictException(
-        new Error('Já existe esse e-mail cadastrado'),
-      );
+      throw new ConflictException('Já existe esse e-mail cadastrado');
     }
 
     const salt = EncryptionUtil.getSalt();
@@ -42,14 +44,20 @@ export class UserService {
 
   async updateOne(updateUserDto: UpdateUserDto): Promise<UserToResponse> {
     const updatedUser: UserToResponse = await this.userModel
-      .findByIdAndUpdate(updateUserDto._id, updateUserDto)
+      .findByIdAndUpdate(updateUserDto._id, updateUserDto, { new: true })
       .select(['_id', 'name', 'email', 'address'])
       .exec();
 
     return updatedUser;
   }
 
-  deleteOne(userId: string): Promise<User> {
-    return this.userModel.findByIdAndDelete(userId).exec();
+  async deleteOne(userId: string): Promise<User> {
+    const deletedUser = await this.userModel.findByIdAndDelete(userId).exec();
+
+    if (!deletedUser) {
+      throw new NotFoundException('Id de usuário não encontrado');
+    }
+
+    return deletedUser;
   }
 }

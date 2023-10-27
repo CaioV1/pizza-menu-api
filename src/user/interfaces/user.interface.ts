@@ -12,3 +12,4 @@ export default interface User {
 export type UserToCreate = Omit<User, '_id' | 'salt'>;
 export type UserToResponse = Omit<User, 'password' | 'salt'>;
 export type UserToUpdate = Omit<User, 'email' | 'password' | 'salt'>;
+export type UserToAuth = Pick<User, 'email' | 'password'>;
