@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 import { UserToResponse } from './interfaces/user.interface';
 import { Public } from 'src/auth/constants';
 
-@Controller('/user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

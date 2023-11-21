@@ -20,7 +20,9 @@ export class AuthService {
       .exec();
 
     if (!user) {
-      throw new UnauthorizedException('E-mail não foi localizado.');
+      throw new UnauthorizedException(
+        'E-mail ou senha incorreto. Por favor tente novamente.',
+      );
     }
 
     const hashPassword = EncryptionUtil.getHash(
@@ -30,7 +32,7 @@ export class AuthService {
 
     if (hashPassword != user.password) {
       throw new UnauthorizedException(
-        'Senha incorreta. Por favor tente novamente.',
+        'E-mail ou senha incorreto. Por favor tente novamente.',
       );
     }
 
